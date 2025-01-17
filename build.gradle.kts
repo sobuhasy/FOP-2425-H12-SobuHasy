@@ -1,54 +1,31 @@
 plugins {
-    java
-    application
-    alias(libs.plugins.style)
-    alias(libs.plugins.jagr.gradle)
+    alias(libs.plugins.algomate)
 }
 
-version = file("version").readLines().first()
+exercise {
+    assignmentId.set("h12")
+}
+
+submission {
+    // ACHTUNG!
+    // Setzen Sie im folgenden Bereich Ihre TU-ID (NICHT Ihre Matrikelnummer!), Ihren Nachnamen und Ihren Vornamen
+    // in Anführungszeichen (z.B. "ab12cdef" für Ihre TU-ID) ein!
+    // BEISPIEL:
+    // studentId = "ab12cdef"
+    // firstName = "sol_first"
+    // lastName = "sol_last"
+    studentId = ""
+    firstName = ""
+    lastName = ""
+
+    // Optionally require own tests for mainBuildSubmission task. Default is false
+    requireTests = false
+}
 
 jagr {
-    assignmentId.set("h12")
-    submissions {
-        val main by creating {
-            // ACHTUNG!
-            // Setzen Sie im folgenden Bereich Ihre TU-ID (NICHT Ihre Matrikelnummer!), Ihren Nachnamen und Ihren Vornamen
-            // in Anführungszeichen (z.B. "ab12cdef" für Ihre TU-ID) ein!
-            // studentId.set("")
-            // firstName.set("")
-            // lastName.set("")
+    graders {
+        val graderPublic by getting {
+            rubricProviderName.set("h12.H12_RubricProviderPublic")
         }
-    }
-}
-
-dependencies {
-    implementation(libs.annotations)
-    implementation(libs.algoutils.student)
-    testImplementation(libs.junit.core)
-}
-
-application {
-    mainClass.set("h12.Main")
-}
-
-tasks {
-    val runDir = File("build/run")
-    withType<JavaExec> {
-        doFirst {
-            runDir.mkdirs()
-        }
-        workingDir = runDir
-    }
-    test {
-        doFirst {
-            runDir.mkdirs()
-        }
-        workingDir = runDir
-        useJUnitPlatform()
-    }
-    withType<JavaCompile> {
-        options.encoding = "UTF-8"
-        sourceCompatibility = "17"
-        targetCompatibility = "17"
     }
 }
