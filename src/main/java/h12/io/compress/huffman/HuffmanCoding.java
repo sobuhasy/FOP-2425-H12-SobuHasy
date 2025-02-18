@@ -5,10 +5,7 @@ import h12.util.TreeNode;
 import org.tudalgo.algoutils.student.annotation.DoNotTouch;
 import org.tudalgo.algoutils.student.annotation.StudentImplementationRequired;
 
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.function.BiFunction;
 
 /**
@@ -32,9 +29,13 @@ public final class HuffmanCoding {
      */
     @StudentImplementationRequired("H12.3.1")
     public Map<Character, Integer> buildFrequencyTable(String text) {
-        // TODO H12.3.1
-        return org.tudalgo.algoutils.student.Student.crash("H12.3.1 - Remove if implemented");
+        Map<Character, Integer> frequencyTable = new HashMap<>();
+        for (char c : text.toCharArray()) {
+            frequencyTable.put(c, frequencyTable.getOrDefault(c, 0) + 1);
+        }
+        return frequencyTable;
     }
+
 
     /**
      * Removes and returns the minimum element from the given collection using the given comparator.
@@ -46,12 +47,8 @@ public final class HuffmanCoding {
      * @return the minimum element
      */
     @StudentImplementationRequired("H12.3.2")
-    public Map<Character, Integer> buildFrequencyTable(String text) {
-        Map<Character, Integer> frequencyTable = new HashMap<>();
-        for (char c : text.toCharArray()) {
-            frequencyTable.put(c, frequencyTable.getOrDefault(c, 0) + 1);
-        }
-        return frequencyTable;
+    <T> T removeMin(Collection<? extends T> elements, Comparator<? super T> cmp) {
+        return elements.stream().min(cmp).orElse(null);
     }
 
     /**
@@ -72,8 +69,22 @@ public final class HuffmanCoding {
             BiFunction<T, T, T> g,
             Comparator<? super T> cmp
     ) {
-        // TODO H12.3.2
-        return org.tudalgo.algoutils.student.Student.crash("H12.3.2 - Remove if implemented");
+        PriorityQueue<T> queue = new PriorityQueue<>(cmp);
+
+        for (Map.Entry<Character, Integer> entry : frequency.entrySet()){
+            queue.add(f.apply(entry.getKey(), entry.getValue()));
+        }
+
+        while (queue.size() > 1){
+            T left = queue.poll();
+            T right = queue.poll();
+
+            T parent = g.apply(left, right);
+
+            queue.add(parent);
+        }
+
+        return queue.poll();
     }
 
     /**
