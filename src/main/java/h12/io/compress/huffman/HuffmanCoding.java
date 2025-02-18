@@ -7,6 +7,7 @@ import org.tudalgo.algoutils.student.annotation.StudentImplementationRequired;
 
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiFunction;
 
@@ -45,9 +46,12 @@ public final class HuffmanCoding {
      * @return the minimum element
      */
     @StudentImplementationRequired("H12.3.2")
-    <T> T removeMin(Collection<? extends T> elements, Comparator<? super T> cmp) {
-        // TODO H12.3.2
-        return org.tudalgo.algoutils.student.Student.crash("H12.3.2 - Remove if implemented");
+    public Map<Character, Integer> buildFrequencyTable(String text) {
+        Map<Character, Integer> frequencyTable = new HashMap<>();
+        for (char c : text.toCharArray()) {
+            frequencyTable.put(c, frequencyTable.getOrDefault(c, 0) + 1);
+        }
+        return frequencyTable;
     }
 
     /**

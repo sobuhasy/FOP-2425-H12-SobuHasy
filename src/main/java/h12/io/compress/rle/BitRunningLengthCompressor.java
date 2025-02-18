@@ -5,6 +5,7 @@ import h12.io.BitOutStream;
 import h12.io.BufferedBitInputStream;
 import h12.io.BufferedBitOutputStream;
 import h12.io.compress.Compressor;
+import h12.lang.MyBit;
 import org.tudalgo.algoutils.student.annotation.DoNotTouch;
 import org.tudalgo.algoutils.student.annotation.StudentImplementationRequired;
 
@@ -67,15 +68,36 @@ public class BitRunningLengthCompressor implements Compressor {
      */
     @StudentImplementationRequired("H12.2.1")
     protected int getBitCount(int bit) throws IOException {
-        // TODO H12.2.1
-        return org.tudalgo.algoutils.student.Student.crash("H12.2.1 - Remove if implemented");
+        int count = 1;
+        while (true){
+            int nextBit = in.readBit();
+            if (nextBit == -1 || nextBit != bit || count == MAX_COUNT){
+                lastRead = nextBit;
+                break;
+            }
+            count++;
+        }
+        return count;
     }
 
     @StudentImplementationRequired("H12.2.1")
     @Override
     public void compress() throws IOException {
-        // TODO H12.2.1
-        org.tudalgo.algoutils.student.Student.crash("H12.2.1 - Remove if implemented");
+        while (true){
+            int bit = in.readBit();
+            if (bit == -1){
+                break;
+            }
+
+            int count = getBitCount(bit);
+
+            MyBit bitValue = MyBit.fromInt(bit);
+
+            out.writeBit(bitValue);
+            out.write(count);
+        }
+
+        out.flush();
     }
 
     @DoNotTouch

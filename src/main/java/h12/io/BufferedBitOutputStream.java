@@ -5,6 +5,7 @@ import h12.lang.MyByte;
 import org.tudalgo.algoutils.student.annotation.DoNotTouch;
 import org.tudalgo.algoutils.student.annotation.StudentImplementationRequired;
 
+import java.awt.dnd.InvalidDnDOperationException;
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -15,7 +16,6 @@ import java.io.OutputStream;
  */
 @DoNotTouch
 public class BufferedBitOutputStream extends BitOutStream {
-
     /**
      * The underlying output stream.
      */
@@ -49,22 +49,40 @@ public class BufferedBitOutputStream extends BitOutStream {
      */
     @StudentImplementationRequired("H12.1.2")
     protected void flushBuffer() throws IOException {
-        // TODO H12.1.2
-        org.tudalgo.algoutils.student.Student.crash("H12.1.2 - Remove if implemented");
+        if (buffer != null && position < MyByte.NUMBER_OF_BITS - 1){
+            underlying.write(buffer.intValue());
+            buffer = new MyByte();
+            position = MyByte.NUMBER_OF_BITS - 1;
+        }
     }
 
     @StudentImplementationRequired("H12.1.2")
     @Override
     public void writeBit(MyBit bit) throws IOException {
-        // TODO H12.1.2
-        org.tudalgo.algoutils.student.Student.crash("H12.1.2 - Remove if implemented");
+        final int INVALID = -1;
+        if (position == INVALID){
+            throw new IOException("Stream is closed");
+        }
+
+        buffer.set(position, bit);
+        position--;
+
+        if (position < 0){
+            flushBuffer();
+        }
     }
 
     @StudentImplementationRequired("H12.1.2")
     @Override
     public void write(int b) throws IOException {
-        // TODO H12.1.2
-        org.tudalgo.algoutils.student.Student.crash("H12.1.2 - Remove if implemented");
+        if (b < MyByte.MIN_VALUE || b > MyByte.MAX_VALUE){
+            throw new IllegalArgumentException("Invalid byte value: " + b);
+        }
+
+        MyByte byteToWrite = new MyByte(b);
+        for (int i = MyByte.NUMBER_OF_BITS - 1; i >= 0; i--){
+            writeBit(byteToWrite.get(i));
+        }
     }
 
     @DoNotTouch

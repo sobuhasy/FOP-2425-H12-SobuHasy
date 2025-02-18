@@ -55,22 +55,68 @@ public class BufferedBitInputStream extends BitInputStream {
      */
     @StudentImplementationRequired("H12.1.1")
     protected void fetch() throws IOException {
-        // TODO H12.1.1
-        org.tudalgo.algoutils.student.Student.crash("H12.1.1 - Remove if implemented");
+        int nextByte = underlying.read();
+        if (nextByte == -1){
+            buffer = null;
+            position = INVALID;
+        } else {
+            buffer = new MyByte(nextByte);
+            position = MyByte.MAX_POSITION;
+        }
     }
 
     @StudentImplementationRequired("H12.1.1")
     @Override
     public int readBit() throws IOException {
-        // TODO H12.1.1
-        return org.tudalgo.algoutils.student.Student.crash("H12.1.1 - Remove if implemented");
+        if (buffer == null || position == INVALID){
+            fetch();
+            if(buffer == null){
+                return INVALID;
+            }
+        }
+
+        int bit = buffer.get(position).intValue();
+        position--;
+
+        if (position < MyByte.MIN_POSITION){
+            fetch();
+        }
+
+        return bit;
     }
 
     @StudentImplementationRequired("H12.1.1")
     @Override
     public int read() throws IOException {
-        // TODO H12.1.1
-        return org.tudalgo.algoutils.student.Student.crash("H12.1.1 - Remove if implemented");
+        if (buffer == null && position == INVALID){
+            fetch();
+            if (buffer == null){
+                return INVALID;
+            }
+        }
+
+        int byteValue = 0;
+        int bitsRead = 0;
+
+        for (int i = 0; i < MyByte.NUMBER_OF_BITS; i++){
+            int bit = readBit();
+            if (bit == INVALID){
+                break;
+            }
+            byteValue = (byteValue << 1) | bit;
+            bitsRead++;
+        }
+
+        if (bitsRead == 0){
+            return INVALID;
+        }
+
+        while (bitsRead < MyByte.NUMBER_OF_BITS){
+            byteValue = (byteValue << 1);
+            bitsRead++;
+        }
+
+        return byteValue;
     }
 
     /**
