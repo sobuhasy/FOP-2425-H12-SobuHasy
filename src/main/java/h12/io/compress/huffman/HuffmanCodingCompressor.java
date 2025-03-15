@@ -16,6 +16,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
 
 /**
  * A compressor that uses the Huffman coding algorithm to compress data.
@@ -56,8 +57,12 @@ public class HuffmanCodingCompressor implements Compressor {
      */
     @StudentImplementationRequired("H12.4.1")
     protected String getText() throws IOException {
-        // TODO H12.4.1
-        return org.tudalgo.algoutils.student.Student.crash("H12.4.1 - Remove if implemented");
+        StringBuilder text = new StringBuilder();
+        String line;
+        while ((line = in.readLine()) != null){
+            text.append(line).append("\n");
+        }
+        return text.toString().trim();
     }
 
     /**
@@ -112,8 +117,11 @@ public class HuffmanCodingCompressor implements Compressor {
      */
     @StudentImplementationRequired("H12.4.1")
     protected int computeTextSize(String text, EncodingTable encodingTable) {
-        // TODO H12.4.1
-        return org.tudalgo.algoutils.student.Student.crash("H12.4.1 - Remove if implemented");
+        int size = 0;
+        for (char c : text.toCharArray()){
+            size += encodingTable.getCode(c).length();
+        }
+        return size;
     }
 
     /**
@@ -125,8 +133,10 @@ public class HuffmanCodingCompressor implements Compressor {
      */
     @StudentImplementationRequired("H12.4.1")
     protected void fillBits(int count) throws IOException {
-        // TODO H12.4.1
-        org.tudalgo.algoutils.student.Student.crash("H12.4.1 - Remove if implemented");
+        out.write(count);
+        for (int i = 0; i < count; i++){
+            out.writeBit(MyBit.ZERO);
+        }
     }
 
     /**
@@ -171,15 +181,27 @@ public class HuffmanCodingCompressor implements Compressor {
      */
     @StudentImplementationRequired("H12.4.1")
     protected void encodeText(String text, EncodingTable encodingTable) throws IOException {
-        // TODO H12.4.1
-        org.tudalgo.algoutils.student.Student.crash("H12.4.1 - Remove if implemented");
+        int size = 0;
+        for (char c : text.toCharArray()){
+            String code = encodingTable.getCode(c);
+            for (char bit : code.toCharArray()){
+                out.writeBit(MyBit.fromInt(bit - '0'));
+                size++;
+            }
+        }
     }
 
     @StudentImplementationRequired("H12.4.1")
     @Override
     public void compress() throws IOException {
-        // TODO H12.4.1
-        org.tudalgo.algoutils.student.Student.crash("H12.4.1 - Remove if implemented");
+        String text = getText();
+        HuffmanCoding huffmanCoding = new HuffmanCoding();
+        Map<Character, Integer> frequencyTable = huffmanCoding.buildFrequencyTable(text);
+        EncodingTable encodingTable = huffmanCoding.buildEncodingTable(frequencyTable);
+
+        int fillBits = computeFillBits(text, encodingTable);
+
+        out.flush();
     }
 
     @DoNotTouch

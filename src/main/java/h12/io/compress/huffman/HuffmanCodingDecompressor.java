@@ -55,8 +55,10 @@ public class HuffmanCodingDecompressor implements Decompressor {
      */
     @StudentImplementationRequired("H12.4.2")
     protected void skipBits() throws IOException {
-        // TODO H12.4.2
-        org.tudalgo.algoutils.student.Student.crash("H12.4.2 - Remove if implemented");
+        int fillBits = in.read();
+        for (int i = 0; i < fillBits; i++){
+            in.readBit();
+        }
     }
 
     /**
@@ -103,8 +105,17 @@ public class HuffmanCodingDecompressor implements Decompressor {
      */
     @StudentImplementationRequired("H12.4.2")
     char decodeCharacter(int startBit, EncodingTable encodingTable) throws IOException {
-        // TODO H12.4.2
-        return org.tudalgo.algoutils.student.Student.crash("H12.4.2 - Remove if implemented");
+        TreeNode<Character> current = ((HuffmanEncodingTable) encodingTable).getRoot();
+        int bit;
+
+        while (!current.isLeaf()){
+            bit = in.readBit();
+            if (bit == -1){
+                throw new IOException("Unexpected end of file");
+            }
+            current = (bit == 0) ? current.getLeft() : current.getRight();
+        }
+        return current.getValue();
     }
 
     /**
@@ -116,8 +127,14 @@ public class HuffmanCodingDecompressor implements Decompressor {
      */
     @StudentImplementationRequired("H12.4.2")
     void decodeText(EncodingTable encodingTable) throws IOException {
-        // TODO H12.4.2
-        org.tudalgo.algoutils.student.Student.crash("H12.4.2 - Remove if implemented");
+        while (true){
+            try {
+                char decodedChar = decodeCharacter(0, encodingTable);
+                out.write(decodedChar);
+                } catch (IOException e){
+                break;
+            }
+        }
     }
 
     /**
@@ -128,8 +145,10 @@ public class HuffmanCodingDecompressor implements Decompressor {
     @StudentImplementationRequired("H12.4.2")
     @Override
     public void decompress() throws IOException {
-        // TODO H12.4.2
-        org.tudalgo.algoutils.student.Student.crash("H12.4.2 - Remove if implemented");
+        skipBits();
+        EncodingTable encodingTable = decodeHeader();
+        decodeText(encodingTable);
+        out.flush();
     }
 
     @DoNotTouch
